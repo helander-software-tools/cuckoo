@@ -36,7 +36,7 @@ func main()  {
         }
 }
 
-funcion configSection(filePath string) []string {
+func configSection(filePath string) []string {
  
     readFile, err := os.Open(filePath)
   
