@@ -7,6 +7,7 @@ import (
 	"os/exec"
 	"strings"
 	"syscall"
+        "bufio"
 )
 
 func main()  {
@@ -35,7 +36,7 @@ func main()  {
         }
 }
 
-funcion configSection(filePath fp) []string {
+funcion configSection(filePath string) []string {
  
     readFile, err := os.Open(filePath)
   
