@@ -19,6 +19,11 @@ func main()  {
 	fmt.Printf("\nEnv[] %v",Env)
         Dir = configSection(".cuckoo/dir")   
 	fmt.Printf("\nDir[] %v",Dir)
+	if os.Args[1] != "" {
+	   fmt.Printf("\nos.Args %v",os.Args[1:])
+	   Args = os.Args[1:]
+	   fmt.Printf("\nArgs[] %v",Args)
+	}
         cmd := exec.Command(Args[0], Args[1:]...)
         cmd.Stdin = os.Stdin
         cmd.Stdout = os.Stdout
