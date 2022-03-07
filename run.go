@@ -9,44 +9,6 @@ import (
         "bufio"
 )
 
-func main()  {
-        var Args []string
-        var Dir []string
-        var Env []string
-        Args = configSection(".cuckoo/args")     
-	fmt.Printf("\nArgs[] %v",Args)
-        Env = configSection(".cuckoo/env")     
-	fmt.Printf("\nEnv[] %v",Env)
-        Dir = configSection(".cuckoo/dir")   
-	fmt.Printf("\nDir[] %v",Dir)
-	if os.Args[1] != "" {
-	   fmt.Printf("\nos.Args %v",os.Args[1:])
-	   Args = os.Args[1:]
-	   fmt.Printf("\nArgs[] %v",Args)
-	}
-        cmd := exec.Command(Args[0], Args[1:]...)
-        cmd.Stdin = os.Stdin
-        cmd.Stdout = os.Stdout
-        cmd.Stderr = os.Stderr
-        cmd.Env = Env
-        cmd.SysProcAttr = &syscall.SysProcAttr{
-                Cloneflags: syscall.CLONE_NEWUTS |
-                        syscall.CLONE_NEWPID |
-                        syscall.CLONE_NEWNS |
-                        syscall.CLONE_NEWIPC,
-        }
-	fmt.Printf("\nBefore chroot")
-	syscall.Chroot(".")
-	if Dir[0] != "" {
-	   fmt.Printf("\nBefore chdir")
-	   os.Chdir(Dir[0])
-	}
-	fmt.Printf("\nBefore run")
-	err := cmd.Run()
-        if err != nil {
-                log.Fatal(err)
-        }
-}
 
 func configSection(filePath string) []string {
  
@@ -72,4 +34,89 @@ func configSection(filePath string) []string {
 }
 
 
+func main() {
+	switch os.Args[1] {
+	case "run":
+		parent()
+	case "child":
+		child()
+	default:
+		panic("what should I do")
+	}
+}
+
+func parent() {
+	cmd := exec.Command("/proc/self/exe", append([]string{"child"}, os.Args[2:]...)...)
+	cmd.SysProcAttr = &syscall.SysProcAttr{
+		Cloneflags: syscall.CLONE_NEWUTS | syscall.CLONE_NEWPID | syscall.CLONE_NEWNS | syscall.CLONE_IPC,
+	}
+	cmd.Stdin = os.Stdin
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+
+	if err := cmd.Run(); err != nil {
+		fmt.Println("ERROR", err)
+		os.Exit(1)
+	}
+}
+
+func child() {
+
+	
+	var Args []string
+        var Dir []string
+        var Env []string
+        Args = configSection(".cuckoo/args")     
+	fmt.Printf("\nArgs[] %v",Args)
+        Env = configSection(".cuckoo/env")     
+	fmt.Printf("\nEnv[] %v",Env)
+        Dir = configSection(".cuckoo/dir")   
+	fmt.Printf("\nDir[] %v",Dir)
+	if os.Args[2] != "" {
+	   fmt.Printf("\nos.Args %v",os.Args[2:])
+	   Args = os.Args[2:]
+	   fmt.Printf("\nArgs[] %v",Args)
+	}
+	
+	must(syscall.Mount(".", ".", "", syscall.MS_BIND, ""))
+	must(os.MkdirAll("./oldrootfs", 0700))
+	must(syscall.PivotRoot(".", "./oldrootfs"))
+	must(os.Chdir("/"))
+	
+	
+        cmd := exec.Command(Args[0], Args[1:]...)
+        cmd.Stdin = os.Stdin
+        cmd.Stdout = os.Stdout
+        cmd.Stderr = os.Stderr
+        cmd.Env = Env
+
+	if Dir[0] != "" {
+	   fmt.Printf("\nBefore chdir")
+	   os.Chdir(Dir[0])
+	}
+	fmt.Printf("\nBefore run")
+	err := cmd.Run()
+        if err != nil {
+                log.Fatal(err)
+        }
+	
+	
+	
+
+	cmd := exec.Command(os.Args[2], os.Args[3:]...)
+	cmd.Stdin = os.Stdin
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+
+	if err := cmd.Run(); err != nil {
+		fmt.Println("ERROR", err)
+		os.Exit(1)
+	}
+}
+
+func must(err error) {
+	if err != nil {
+		panic(err)
+	}
+}
 
