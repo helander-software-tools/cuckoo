@@ -32,5 +32,6 @@ jobs:
       -
         name: Run built program
         run: |
+          find dist
           dist/cuckoo_linux_amd64/cuckoo-run
 
