@@ -38,5 +38,5 @@ jobs:
           mkdir rootfs
           cd rootfs
           tar zxf ../alpine_linux_amd64.tar.gz
-          ../dist/cuckoo-run_linux_amd64/cuckoo-run
+          sudo ../dist/cuckoo-run_linux_amd64/cuckoo-run
 
