@@ -72,7 +72,7 @@ func child() {
 	fmt.Printf("\nEnv[] %v",Env)
         Dir = configSection("rootfs/.cuckoo/dir")   
 	fmt.Printf("\nDir[] %v",Dir)
-	if os.Args[2] != "" {
+	if len(os.Args) > 2 {
 	   fmt.Printf("\nos.Args %v",os.Args[2:])
 	   Args = os.Args[2:]
 	   fmt.Printf("\nArgs[] %v",Args)
