@@ -13,9 +13,12 @@ func main()  {
         var Args []string
         var Dir []string
         var Env []string
-        Args = configSection(".cuckoo/args")        
-        Env = configSection(".cuckoo/env")        
-        Dir = configSection(".cuckoo/dir")        
+        Args = configSection(".cuckoo/args")     
+	fmt.Printf("\nArgs[] %v",Args)
+        Env = configSection(".cuckoo/env")     
+	fmt.Printf("\nEnv[] %v",Env)
+        Dir = configSection(".cuckoo/dir")   
+	fmt.Printf("\nDir[] %v",Dir)
         cmd := exec.Command(Args[0], Args[1:]...)
         cmd.Stdin = os.Stdin
         cmd.Stdout = os.Stdout
@@ -27,8 +30,11 @@ func main()  {
                         syscall.CLONE_NEWNS |
                         syscall.CLONE_NEWIPC,
         }
+	fmt.Printf("\nBefore chroot")
 	syscall.Chroot(".")
+	fmt.Printf("\nBefore chdir")
 	os.Chdir(Dir[0])
+	fmt.Printf("\nBefore run")
 	err := cmd.Run()
         if err != nil {
                 log.Fatal(err)
@@ -38,9 +44,11 @@ func main()  {
 func configSection(filePath string) []string {
  
     readFile, err := os.Open(filePath)
+    fmt.Printf("\nconfigSection %s",filePath)
   
     if err != nil {
         fmt.Println(err)
+	return nil
     }
     fileScanner := bufio.NewScanner(readFile)
     fileScanner.Split(bufio.ScanLines)
