@@ -32,12 +32,15 @@ jobs:
       -
         name: Run built program
         run: |
-          ./rootfs-generator.sh linux/amd64 nodered/node-red
+          #./rootfs-generator.sh linux/amd64 nodered/node-red
           ./rootfs-generator.sh linux/amd64 alpine
           ls -l
           mkdir rootfs
           cd rootfs
           tar zxf ../alpine_linux_amd64.tar.gz
           cat .cuckoo/*
-          sudo ../dist/cuckoo-run_linux_amd64/cuckoo-run /bin/sh -c ps
+          sudo ../dist/cuckoo-run_linux_amd64/cuckoo-run /bin/sh -c "ls /proc"
+          sudo ../dist/cuckoo-run_linux_amd64/cuckoo-run /bin/sh -c "ps"
+          sudo ../dist/cuckoo-run_linux_amd64/cuckoo-run /bin/sh -c "apk update"
+          
 
