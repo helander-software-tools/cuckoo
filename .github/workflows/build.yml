@@ -33,5 +33,10 @@ jobs:
         name: Run built program
         run: |
           ./rootfs-generator.sh linux/amd64 nodered/node-red
-          dist/cuckoo-run_linux_amd64/cuckoo-run
+          ./rootfs-generator.sh linux/amd64 alpine
+          ls -l
+          mkdir rootfs
+          cd rootfs
+          tar zxf ../alpine_linux_amd64.tar.gz
+          ../dist/cuckoo-run_linux_amd64/cuckoo-run
 
