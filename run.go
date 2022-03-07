@@ -66,11 +66,11 @@ func child() {
 	var Args []string
         var Dir []string
         var Env []string
-        Args = configSection(".cuckoo/args")     
+        Args = configSection("rootfs/.cuckoo/args")     
 	fmt.Printf("\nArgs[] %v",Args)
-        Env = configSection(".cuckoo/env")     
+        Env = configSection("rootfs/.cuckoo/env")     
 	fmt.Printf("\nEnv[] %v",Env)
-        Dir = configSection(".cuckoo/dir")   
+        Dir = configSection("rootfs/.cuckoo/dir")   
 	fmt.Printf("\nDir[] %v",Dir)
 	if os.Args[2] != "" {
 	   fmt.Printf("\nos.Args %v",os.Args[2:])
@@ -78,9 +78,9 @@ func child() {
 	   fmt.Printf("\nArgs[] %v",Args)
 	}
 	
-	must(syscall.Mount("./", "./", "", syscall.MS_BIND, ""))
-	must(os.MkdirAll("./oldrootfs", 0700))
-	must(syscall.PivotRoot("./", "./oldrootfs"))
+	must(syscall.Mount("rootfs", "rootfs", "", syscall.MS_BIND, ""))
+	must(os.MkdirAll("rootfs/oldrootfs", 0700))
+	must(syscall.PivotRoot("rootfs", "rootfs/oldrootfs"))
 	must(os.Chdir("/"))
 	
 	
