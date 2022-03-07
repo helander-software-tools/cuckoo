@@ -78,9 +78,9 @@ func child() {
 	   fmt.Printf("\nArgs[] %v",Args)
 	}
 	
-	must(syscall.Mount(".", ".", "", syscall.MS_BIND, ""))
+	must(syscall.Mount("./", "./", "", syscall.MS_BIND, ""))
 	must(os.MkdirAll("./oldrootfs", 0700))
-	must(syscall.PivotRoot(".", "./oldrootfs"))
+	must(syscall.PivotRoot("./", "./oldrootfs"))
 	must(os.Chdir("/"))
 	
 	
