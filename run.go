@@ -32,8 +32,10 @@ func main()  {
         }
 	fmt.Printf("\nBefore chroot")
 	syscall.Chroot(".")
-	fmt.Printf("\nBefore chdir")
-	os.Chdir(Dir[0])
+	if Dir[0] != "" {
+	   fmt.Printf("\nBefore chdir")
+	   os.Chdir(Dir[0])
+	}
 	fmt.Printf("\nBefore run")
 	err := cmd.Run()
         if err != nil {
