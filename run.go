@@ -99,11 +99,6 @@ func child() {
         if err != nil {
                 log.Fatal(err)
         }
-
-	if err := cmd.Run(); err != nil {
-		fmt.Println("ERROR", err)
-		os.Exit(1)
-	}
 }
 
 func must(err error) {
