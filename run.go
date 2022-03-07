@@ -102,6 +102,7 @@ func child() {
 
 func must(err error) {
 	if err != nil {
+		fmt.Printf("\n\nError must %v",err)
 		panic(err)
 	}
 }
