@@ -39,6 +39,7 @@ jobs:
           cd rootfs
           tar zxf ../alpine_linux_amd64.tar.gz
           cat .cuckoo/*
+          cd ..
           sudo ../dist/cuckoo_linux_amd64/cuckoo run /bin/sh -c "pwd"
           sudo ../dist/cuckoo_linux_amd64/cuckoo run /bin/sh -c "ls -l"
           #sudo ../dist/cuckoo_linux_amd64/cuckoo run /bin/sh -c "ls /proc"
