@@ -111,7 +111,13 @@ func child() {
         if err != nil {
                 log.Fatal(err)
         }
-}
+	
+	//must(syscall.Unmount("/dev/pts", 0))
+        must(syscall.Unmount("/dev", 0))
+        must(syscall.Unmount("/sys", 0))
+        must(syscall.Unmount("/proc", 0))
+        must(syscall.Unmount("/tmp", 0))
+}  
 
 func must(err error) {
 	if err != nil {
