@@ -37,8 +37,8 @@ jobs:
           ls -l
           mkdir rootfs
           cd rootfs
-          tar zxf ../alpine_linux_amd64.tar.gz
-          cat .cuckoo/*
+          sudo tar zxf ../alpine_linux_amd64.tar.gz
+          sudo cat .cuckoo/*
           sudo ../dist/cuckoo_linux_amd64/cuckoo run /bin/sh -c mount
           sudo ../dist/cuckoo_linux_amd64/cuckoo run /bin/sh -c df
           sudo ../dist/cuckoo_linux_amd64/cuckoo run /bin/sh -c ps
