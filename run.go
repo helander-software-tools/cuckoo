@@ -8,6 +8,7 @@ import (
 	"syscall"
         "bufio"
 	"io/ioutil"
+	"time"
 )
 
 
@@ -105,6 +106,11 @@ func child() {
 	must(syscall.Mount("proc", "/proc", "proc", 0, ""))
         must(syscall.Mount("tmpfs", "/tmp", "tmpfs", 0, ""))
         must(syscall.Mount("tmpfs", "/dev", "tmpfs", 0, ""))
+	
+	
+	time.Sleep(3 * time.Second)
+  
+	
         //createDirsIfDontExist([]string{"/dev/pts"})
         must(syscall.Mount("devpts", "/dev/pts", "devpts", 0, ""))
         must(syscall.Mount("sysfs", "/sys", "sysfs", 0, ""))
