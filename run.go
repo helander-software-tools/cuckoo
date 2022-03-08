@@ -110,7 +110,7 @@ func child() {
 	   fmt.Printf("\nChange directory to: %s",Dir[0])
 	   os.Chdir(Dir[0])
 	}
-	fmt.Printf("\nRun container:\n")
+	fmt.Printf("\n\nRun container:\n\n")
 	err = cmd.Run()
         if err != nil {
                 log.Fatal(err)
