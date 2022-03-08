@@ -35,10 +35,9 @@ jobs:
           #./rootfs-generator.sh linux/amd64 nodered/node-red
           ./rootfs-generator.sh linux/amd64 alpine
           ls -l
-          mkdir rootfs
-          cd rootfs
-          sudo tar zxf ../alpine_linux_amd64.tar.gz
-          sudo cat .cuckoo/*
+          mkdir alpine
+          sudo tar zxf ../alpine_linux_amd64.tar.gz -C alpine
+          cd alpine
           sudo ../dist/cuckoo_linux_amd64/cuckoo run /bin/sh -c mount
           sudo ../dist/cuckoo_linux_amd64/cuckoo run /bin/sh -c df
           sudo ../dist/cuckoo_linux_amd64/cuckoo run /bin/sh -c ps
@@ -51,4 +50,7 @@ jobs:
           sudo ../dist/cuckoo_linux_amd64/cuckoo run /bin/sh -c "ping -c 4 sandgatan.helander.network"
           sudo ../dist/cuckoo_linux_amd64/cuckoo run /bin/sh -c "apk update"
           sudo ../dist/cuckoo_linux_amd64/cuckoo run /bin/sh -c "apk add nano"
-
+          mkdir nodered
+          sudo tar zxf ../nodered_node-red_linux_amd64.tar.gz -C nodered
+          cd nodered
+          sudo ../dist/cuckoo_linux_amd64/cuckoo run 
