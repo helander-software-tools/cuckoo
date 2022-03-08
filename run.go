@@ -100,10 +100,10 @@ func child() {
 
 	must(syscall.Mount("proc", "/proc", "proc", 0, ""))
         must(syscall.Mount("tmpfs", "/tmp", "tmpfs", 0, ""))
-        must(syscall.Mount("tmpfs", "/dev", "tmpfs", 0, ""))    
-	must(os.MkdirAll("/dev/pts",0755))
-        must(syscall.Mount("devpts", "/dev/pts", "devpts", 0, ""))
-        must(syscall.Mount("sysfs", "/sys", "sysfs", 0, ""))
+        #must(syscall.Mount("tmpfs", "/dev", "tmpfs", 0, ""))    
+	#must(os.MkdirAll("/dev/pts",0755))
+        #must(syscall.Mount("devpts", "/dev/pts", "devpts", 0, ""))
+        #must(syscall.Mount("sysfs", "/sys", "sysfs", 0, ""))
 	
 	
 	if Dir[0] != "" {
