@@ -7,6 +7,7 @@ import (
 	"os/exec"
 	"syscall"
         "bufio"
+	"io/ioutil"
 )
 
 
@@ -85,6 +86,16 @@ func child() {
         cmd.Stdout = os.Stdout
         cmd.Stderr = os.Stderr
         cmd.Env = Env
+
+
+	bytesRead, err := ioutil.ReadFile("/etc/resolv.conf")
+        if err != nil {
+            panic(err)
+        }
+        err = ioutil.WriteFile("etc/resolv.conf", bytesRead, 0644)
+        if err != nil {
+          panic(err)
+        }
 
 	must(syscall.Chroot("."))
 	must(os.Chdir("/"))	
