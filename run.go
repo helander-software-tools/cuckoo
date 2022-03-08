@@ -62,19 +62,19 @@ func parent() {
 
 func child() {
 
-	must(syscall.Mount("rootfs", "rootfs", "", syscall.MS_BIND, ""))
-	must(os.MkdirAll("rootfs/oldrootfs", 0700))
-	must(syscall.PivotRoot("rootfs", "rootfs/oldrootfs"))
-	must(os.Chdir("/"))	
+	//must(syscall.Mount("rootfs", "rootfs", "", syscall.MS_BIND, ""))
+	//must(os.MkdirAll("rootfs/oldrootfs", 0700))
+	//must(syscall.PivotRoot("rootfs", "rootfs/oldrootfs"))
+	
 	
 	var Args []string
         var Dir []string
         var Env []string
-        Args = configSection("rootfs/.cuckoo/args")     
+        Args = configSection(".cuckoo/args")     
 	fmt.Printf("\nArgs[] %v",Args)
-        Env = configSection("rootfs/.cuckoo/env")     
+        Env = configSection(".cuckoo/env")     
 	fmt.Printf("\nEnv[] %v",Env)
-        Dir = configSection("rootfs/.cuckoo/dir")   
+        Dir = configSection(".cuckoo/dir")   
 	fmt.Printf("\nDir[] %v",Dir)
 	if len(os.Args) > 2 {
 	   fmt.Printf("\nos.Args %v",os.Args[2:])
@@ -89,6 +89,9 @@ func child() {
         cmd.Stderr = os.Stderr
         cmd.Env = Env
 
+	must(syscall.Chroot("."))
+	must(os.Chdir("/"))	
+	
 	if Dir[0] != "" {
 	   fmt.Printf("\nBefore chdir")
 	   os.Chdir(Dir[0])
