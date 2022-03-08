@@ -91,6 +91,16 @@ func child() {
 
 	must(syscall.Chroot("."))
 	must(os.Chdir("/"))	
+
+	
+	
+	must(syscall.Mount("proc", "/proc", "proc", 0, ""))
+        must(syscall.Mount("tmpfs", "/tmp", "tmpfs", 0, ""))
+        must(syscall.Mount("tmpfs", "/dev", "tmpfs", 0, ""))
+        //createDirsIfDontExist([]string{"/dev/pts"})
+        //doOrDieWithMsg(syscall.Mount("devpts", "/dev/pts", "devpts", 0, ""), "Unable to mount devpts")
+        must(syscall.Mount("sysfs", "/sys", "sysfs", 0, ""))
+	
 	
 	if Dir[0] != "" {
 	   fmt.Printf("\nBefore chdir")
