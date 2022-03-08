@@ -115,7 +115,7 @@ func child() {
 	   os.Chdir(Dir[0])
 	}
 	fmt.Printf("\nBefore run")
-	err := cmd.Run()
+	err = cmd.Run()
         if err != nil {
                 log.Fatal(err)
         }
