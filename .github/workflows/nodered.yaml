@@ -18,4 +18,10 @@ jobs:
       -
         name: Build nodered cuckoo rootfs
         run: |
-          ./rootfs-generator.sh linux/amd64 nodered/node-red
+          ./rootfs-generator.sh linux/arm64 nodered/node-red
+      -
+        name: Upload archive
+        uses: actions/upload-artifact@v2
+        with: 
+          name: nodered arm64
+          path: nodered_node-red_linux_arm64.tar.gz
