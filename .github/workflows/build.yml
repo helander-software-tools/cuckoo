@@ -45,6 +45,8 @@ jobs:
           sudo ../dist/cuckoo_linux_amd64/cuckoo run /bin/sh -c "ls -l"
           sudo ../dist/cuckoo_linux_amd64/cuckoo run /bin/sh -c "ls /proc"
           sudo ../dist/cuckoo_linux_amd64/cuckoo run /bin/sh -c "ls -l dev"
-          sudo ../dist/cuckoo_linux_amd64/cuckoo run /bin/sh -c "apk update"
+          sudo ../dist/cuckoo_linux_amd64/cuckoo run /bin/sh -c "ip link"
+          sudo ../dist/cuckoo_linux_amd64/cuckoo run /bin/sh -c "ip addr"
+          #sudo ../dist/cuckoo_linux_amd64/cuckoo run /bin/sh -c "apk update"
           
 
