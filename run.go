@@ -14,7 +14,7 @@ import (
 func configSection(filePath string) []string {
  
     readFile, err := os.Open(filePath)
-    fmt.Printf("\nconfigSection %s",filePath)
+    //fmt.Printf("\nconfigSection %s",filePath)
   
     if err != nil {
         fmt.Println(err)
@@ -42,6 +42,7 @@ func main() {
 	case "child":
 		child()
 	default:
+		fmt.Printf("\nmain() with args %v \n",os.Args)
 		panic("what should I do")
 	}
 }
@@ -55,10 +56,7 @@ func parent() {
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 
-	if err := cmd.Run(); err != nil {
-		fmt.Println("ERROR", err)
-		os.Exit(1)
-	}
+	must(cmd.Run())
 }
 
 func child() {
@@ -75,7 +73,7 @@ func child() {
         Dir = configSection(".cuckoo/dir")   
 	fmt.Printf("\nDir[] %v",Dir)
 	if len(os.Args) > 2 {
-	   fmt.Printf("\nos.Args %v",os.Args[2:])
+	   //fmt.Printf("\nos.Args %v",os.Args[2:])
 	   Args = os.Args[2:]
 	   fmt.Printf("\nArgs[] %v",Args)
 	}
@@ -109,10 +107,10 @@ func child() {
 	
 	
 	if Dir[0] != "" {
-	   fmt.Printf("\nBefore chdir")
+	   fmt.Printf("\nChange directory to: %s",Dir[0])
 	   os.Chdir(Dir[0])
 	}
-	fmt.Printf("\nBefore run")
+	fmt.Printf("\nRun container:\n")
 	err = cmd.Run()
         if err != nil {
                 log.Fatal(err)
@@ -127,7 +125,7 @@ func child() {
 
 func must(err error) {
 	if err != nil {
-		fmt.Printf("\n\nError must %v",err)
+		//fmt.Printf("\n\nError must %v",err)
 		panic(err)
 	}
 }
