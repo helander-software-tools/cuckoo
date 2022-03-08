@@ -32,7 +32,6 @@ jobs:
       -
         name: Run built program
         run: |
-          ./rootfs-generator.sh linux/amd64 nodered/node-red
           ./rootfs-generator.sh linux/amd64 alpine
           ls -l
           mkdir alpine
@@ -42,13 +41,9 @@ jobs:
           sudo dist/cuckoo_linux_amd64/cuckoo run alpine /bin/sh -c ps
           sudo dist/cuckoo_linux_amd64/cuckoo run alpine /bin/sh -c "ls -l"
           sudo dist/cuckoo_linux_amd64/cuckoo run alpine /bin/sh -c "ls /proc"
-          #sudo dist/cuckoo_linux_amd64/cuckoo run alpine /bin/sh -c "ls -l dev"
           sudo dist/cuckoo_linux_amd64/cuckoo run alpine /bin/sh -c "ip link"
           sudo dist/cuckoo_linux_amd64/cuckoo run alpine /bin/sh -c "ip addr"
           #sudo dist/cuckoo_linux_amd64/cuckoo run alpine /bin/sh -c "ping -c 4 31.209.50.91"
           #sudo dist/cuckoo_linux_amd64/cuckoo run alpine /bin/sh -c "ping -c 4 sandgatan.helander.network"
           sudo dist/cuckoo_linux_amd64/cuckoo run alpine /bin/sh -c "apk update"
           sudo dist/cuckoo_linux_amd64/cuckoo run alpine /bin/sh -c "apk add nano tcpdump"
-          mkdir nodered
-          sudo tar zxf nodered_node-red_linux_amd64.tar.gz -C nodered
-          sudo dist/cuckoo_linux_amd64/cuckoo run nodered
