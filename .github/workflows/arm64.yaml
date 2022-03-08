@@ -8,8 +8,7 @@ permissions:
 
 env:
   GOOS: linux
-  GOARCH: arm
-  GOARM: arm64
+  GOARCH: arm64
   
 jobs:
   goreleaser:
