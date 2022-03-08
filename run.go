@@ -121,6 +121,8 @@ func child() {
         must(syscall.Unmount("/sys", 0))
         must(syscall.Unmount("/proc", 0))
         must(syscall.Unmount("/tmp", 0))
+	
+	fmt.Printf("\nExit container.\n")
 }  
 
 func must(err error) {
