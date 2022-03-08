@@ -62,9 +62,6 @@ func parent() {
 
 func child() {
 
-	//must(syscall.Mount("rootfs", "rootfs", "", syscall.MS_BIND, ""))
-	//must(os.MkdirAll("rootfs/oldrootfs", 0700))
-	//must(syscall.PivotRoot("rootfs", "rootfs/oldrootfs"))
 	
 	
 	var Args []string
@@ -98,7 +95,7 @@ func child() {
         must(syscall.Mount("tmpfs", "/tmp", "tmpfs", 0, ""))
         must(syscall.Mount("tmpfs", "/dev", "tmpfs", 0, ""))
         //createDirsIfDontExist([]string{"/dev/pts"})
-        //doOrDieWithMsg(syscall.Mount("devpts", "/dev/pts", "devpts", 0, ""), "Unable to mount devpts")
+        must(syscall.Mount("devpts", "/dev/pts", "devpts", 0, ""))
         must(syscall.Mount("sysfs", "/sys", "sysfs", 0, ""))
 	
 	
@@ -112,7 +109,7 @@ func child() {
                 log.Fatal(err)
         }
 	
-	//must(syscall.Unmount("/dev/pts", 0))
+	must(syscall.Unmount("/dev/pts", 0))
         must(syscall.Unmount("/dev", 0))
         must(syscall.Unmount("/sys", 0))
         must(syscall.Unmount("/proc", 0))
