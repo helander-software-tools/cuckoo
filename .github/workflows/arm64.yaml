@@ -1,4 +1,4 @@
-name: build
+name: cuckoo arm64
 
 on:
   workflow_dispatch:
