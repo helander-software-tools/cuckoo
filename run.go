@@ -35,6 +35,10 @@ func configSection(filePath string) []string {
 
 
 func main() {
+	if len(os.Args) < 2 {
+	   fmt.Printf("\nMissing command.")
+	   os.Exit(1)
+	}
 	switch os.Args[1] {
 	case "run":
 		parent()
@@ -59,8 +63,11 @@ func parent() {
 }
 
 func child() {
-
-	
+        if len(os.Args) < 3 {
+	   fmt.Printf("\nMissing rootfs path")
+	   os.Exit(1)
+	}
+	must(os.Chdir(os.Args[2]))	
 	
 	var Args []string
         var Dir []string
@@ -71,9 +78,9 @@ func child() {
 	fmt.Printf("\nEnv[] %v",Env)
         Dir = configSection(".cuckoo/dir")   
 	fmt.Printf("\nDir[] %v",Dir)
-	if len(os.Args) > 2 {
-	   //fmt.Printf("\nos.Args %v",os.Args[2:])
-	   Args = os.Args[2:]
+	if len(os.Args) > 3 {
+	   //fmt.Printf("\nos.Args %v",os.Args[3:])
+	   Args = os.Args[3:]
 	   fmt.Printf("\nArgs[] %v",Args)
 	}
 
