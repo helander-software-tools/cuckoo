@@ -47,8 +47,8 @@ jobs:
           sudo ../dist/cuckoo_linux_amd64/cuckoo run /bin/sh -c "ls -l dev"
           sudo ../dist/cuckoo_linux_amd64/cuckoo run /bin/sh -c "ip link"
           sudo ../dist/cuckoo_linux_amd64/cuckoo run /bin/sh -c "ip addr"
-          sudo ../dist/cuckoo_linux_amd64/cuckoo ru n /bin/sh -c "ping -c 4 31.209.50.91"
-          sudo ../dist/cuckoo_linux_amd64/cuckoo ru n /bin/sh -c "ping -c 4 sandgatan.helander.network"
-          sudo ../dist/cuckoo_linux_amd64/cuckoo ru n /bin/sh -c "apk update"
+          sudo ../dist/cuckoo_linux_amd64/cuckoo run /bin/sh -c "ping -c 4 31.209.50.91"
+          sudo ../dist/cuckoo_linux_amd64/cuckoo run /bin/sh -c "ping -c 4 sandgatan.helander.network"
+          sudo ../dist/cuckoo_linux_amd64/cuckoo run /bin/sh -c "apk update"
           
 
