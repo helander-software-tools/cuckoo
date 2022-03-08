@@ -35,3 +35,12 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       -
+        name: find files
+        run: |
+          find dist
+      -
+        name: Upload archive
+        uses: actions/upload-artifact@v2
+        with: 
+          name: cuckoo arm64
+          path: dist/cuckoo_linux_arm64/cuckoo
