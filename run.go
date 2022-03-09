@@ -56,7 +56,7 @@ func parent() {
 		//Cloneflags: syscall.CLONE_NEWUTS | syscall.CLONE_NEWPID | syscall.CLONE_NEWNS | syscall.CLONE_NEWIPC,
 	//}
 	cmd.SysProcAttr = &syscall.SysProcAttr{
-		Cloneflags: syscall.CLONE_NEWUTS,
+		Cloneflags: syscall.CLONE_NEWPID,
 	}
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
