@@ -34,6 +34,7 @@ jobs:
         run: |
           ./rootfs-generator.sh linux/amd64 alpine
           ls -l
+          mount
           mkdir alpine
           sudo tar zxf alpine_linux_amd64.tar.gz -C alpine
           sudo dist/cuckoo_linux_amd64/cuckoo run alpine /bin/sh -c mount
@@ -47,3 +48,4 @@ jobs:
           #sudo dist/cuckoo_linux_amd64/cuckoo run alpine /bin/sh -c "ping -c 4 sandgatan.helander.network"
           sudo dist/cuckoo_linux_amd64/cuckoo run alpine /bin/sh -c "apk update"
           sudo dist/cuckoo_linux_amd64/cuckoo run alpine /bin/sh -c "apk add nano tcpdump"
+          mount
