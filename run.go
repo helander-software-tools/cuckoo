@@ -124,11 +124,11 @@ func child() {
 		fmt.Printf("\nError result from container : %v\n",err)
         }
 	
-	//must(syscall.Unmount("/dev/pts", 0))
-        //must(syscall.Unmount("/dev", 0))
-        //must(syscall.Unmount("/sys", 0))
-        //must(syscall.Unmount("/proc", 0))
-        //must(syscall.Unmount("/tmp", 0))
+	must(syscall.Unmount("/dev/pts", 0))
+        must(syscall.Unmount("/dev", 0))
+        must(syscall.Unmount("/sys", 0))
+        must(syscall.Unmount("/proc", 0))
+        must(syscall.Unmount("/tmp", 0))
 	
 	fmt.Printf("\nExit container.\n")
 }  
