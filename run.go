@@ -52,9 +52,10 @@ func main() {
 
 func parent() {
 	cmd := exec.Command("/proc/self/exe", append([]string{"child"}, os.Args[2:]...)...)
-	//cmd.SysProcAttr = &syscall.SysProcAttr{
+	cmd.SysProcAttr = &syscall.SysProcAttr{
 		//Cloneflags: syscall.CLONE_NEWUTS | syscall.CLONE_NEWPID | syscall.CLONE_NEWNS | syscall.CLONE_NEWIPC,
-	//}
+		Cloneflags: syscall.CLONE_NEWNS,
+	}
 	
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
