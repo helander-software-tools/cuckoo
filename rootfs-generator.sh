@@ -16,11 +16,9 @@ CONTAINER=$(docker create --platform $COMPONENT_PLATFORM $COMPONENT_REGISTRY)
 rm -fr .cuckoo
 mkdir .cuckoo
 docker inspect --format '{{.Config.WorkingDir}}' $CONTAINER > .cuckoo/dir 
-docker inspect --format '{{.Config.Env}}' $CONTAINER |tr '[' ' '|tr ']' ' '|xargs|tr ' ' '\n' > .cuckoo/env
-docker inspect --format '{{.Config.Entrypoint}}' $CONTAINER |tr '[' ' '|tr ']' ' '|xargs|tr ' ' '\n' > .cuckoo/args
-if [ "$(cat .cuckoo/args)" == "" ];then
-   docker inspect --format '{{.Config.Cmd}}' $CONTAINER |tr '[' ' '|tr ']' ' '|xargs|tr ' ' '\n' > .cuckoo/args
-fi
+docker inspect --format '{{.Config.Env}}'        $CONTAINER |tr '[' ' '|tr ']' ' '|xargs|tr ' ' '\n' > .cuckoo/env
+docker inspect --format '{{.Config.Entrypoint}}' $CONTAINER |tr '[' ' '|tr ']' ' '|xargs|tr ' ' '\n' > .cuckoo/entrypoint
+docker inspect --format '{{.Config.Cmd}}'        $CONTAINER |tr '[' ' '|tr ']' ' '|xargs|tr ' ' '\n' > .cuckoo/cmd
 
 docker cp .cuckoo $CONTAINER:/
 
