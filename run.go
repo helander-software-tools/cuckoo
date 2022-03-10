@@ -71,11 +71,16 @@ func child() {
 	}
 	must(os.Chdir(os.Args[2]))	
 	
-	var Args []string
+	//var Args []string
         var Dir []string
         var Env []string
-        Args = configSection(".cuckoo/args")     
-	fmt.Printf("\nArgs[] %v",Args)
+	var Entrypoint[]string
+	var Cmd[]string
+	
+        Cmd = configSection(".cuckoo/cmd")     
+	fmt.Printf("\nCmd[] %v",Cmd)
+	Entrypoint = configSection(".cuckoo/entrypoint")
+	fmt.Printf("\nEntrypoint[] %v",Entrypoint)
         Env = configSection(".cuckoo/env")     
 	fmt.Printf("\nEnv[] %v",Env)
         Dir = configSection(".cuckoo/dir")   
