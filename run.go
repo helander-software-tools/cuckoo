@@ -58,7 +58,9 @@ func command(entrypoint []string, cmd []string, commandLine []string) []string {
 	fmt.Printf("\n   cmd:         %v",cmd)
 	fmt.Printf("\n   commandLine: %v",commandLine)
 
-	args = commandLine
+	//args = commandLine
+	args = cmd
+	//args = entrypoint
 	return args
 }
 
