@@ -87,7 +87,7 @@ func runCommand(args []string) {
 	progCmd := command(Entrypoint,Cmd,args[1:])
 	fmt.Printf("\nProgram exec : %v",progCmd)
 	
-	cmd := exec.Command(progCmd[0], append("",progCmd[1:]...)...)
+	cmd := exec.Command(progCmd[0], append([]string{""},progCmd[1:]...)...)
         cmd.Stdin = os.Stdin
         cmd.Stdout = os.Stdout
         cmd.Stderr = os.Stderr
