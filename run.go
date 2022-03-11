@@ -50,6 +50,18 @@ func main() {
 
 	//cmd := exec.Command("/proc/self/exe", append([]string{"child"}, os.Args[2:]...)...)
 
+
+func command(entrypoint []string, cmd []string, commandLine []string) []string {
+        var args []string
+	
+	fmt.Printf("\n   entrypoint:  %v",entrypoint)
+	fmt.Printf("\n   cmd:         %v",cmd)
+	fmt.Printf("\n   commandLine: %v",commandLine)
+
+	args = commandLine
+	return args
+}
+
 func runCommand(args []string) {
         if len(args) < 1 {
 	   fmt.Printf("\nMissing rootfs path")
@@ -57,7 +69,7 @@ func runCommand(args []string) {
 	}
 	must(os.Chdir(args[0]))	
 	
-	//var Args []string
+
         var Dir []string
         var Env []string
 	var Entrypoint[]string
@@ -71,14 +83,11 @@ func runCommand(args []string) {
 	fmt.Printf("\nEnv[] %v",Env)
         Dir = configSection(".cuckoo/dir")   
 	fmt.Printf("\nDir[] %v",Dir)
-	if len(args) > 1 {
-		//fmt.Printf("\nargs %v",args[1:])
-	   Args = args[3:]
-	   fmt.Printf("\nArgs[] %v",Args)
-	}
-
 	
-        cmd := exec.Command(Args[0], Args[1:]...)
+	var progCmd []string := command(Entrypoint,Cmd,args[1:])
+	fmt.Printf("\nProgram exec : %v",progCmd)
+	
+	cmd := exec.Command(progCmd)
         cmd.Stdin = os.Stdin
         cmd.Stdout = os.Stdout
         cmd.Stderr = os.Stderr
