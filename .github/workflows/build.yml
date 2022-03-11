@@ -40,6 +40,7 @@ jobs:
           ls -l
           mkdir alpine
           sudo tar zxf alpine_linux_amd64.tar.gz -C alpine
+          sudo dist/cuckoo_linux_amd64/cuckoo run alpine /bin/sh -c cat /proc/self/cmdline
           sudo dist/cuckoo_linux_amd64/cuckoo run alpine /bin/sh -c mount
           sudo dist/cuckoo_linux_amd64/cuckoo run alpine /bin/sh -c df
           sudo dist/cuckoo_linux_amd64/cuckoo run alpine /bin/sh -c ps
