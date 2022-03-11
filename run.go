@@ -84,7 +84,7 @@ func runCommand(args []string) {
         Dir = configSection(".cuckoo/dir")   
 	fmt.Printf("\nDir[] %v",Dir)
 	
-	var progCmd []string := command(Entrypoint,Cmd,args[1:])
+	progCmd := command(Entrypoint,Cmd,args[1:])
 	fmt.Printf("\nProgram exec : %v",progCmd)
 	
 	cmd := exec.Command(progCmd)
