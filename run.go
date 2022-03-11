@@ -41,35 +41,21 @@ func main() {
 	}
 	switch os.Args[1] {
 	case "run":
-		parent()
-	case "child":
-		child()
+		runCommand(os.Args[2:])
 	default:
 		fmt.Printf("\nmain() with args %v \n",os.Args)
 		panic("what should I do")
 	}
 }
 
-func parent() {
-	cmd := exec.Command("/proc/self/exe", append([]string{"child"}, os.Args[2:]...)...)
-	//cmd.SysProcAttr = &syscall.SysProcAttr{
-		//Cloneflags: syscall.CLONE_NEWUTS | syscall.CLONE_NEWPID | syscall.CLONE_NEWNS | syscall.CLONE_NEWIPC,
-		//Cloneflags: syscall.CLONE_NEWNS,
-	//}
-	
-	cmd.Stdin = os.Stdin
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
+	//cmd := exec.Command("/proc/self/exe", append([]string{"child"}, os.Args[2:]...)...)
 
-	must(cmd.Run())
-}
-
-func child() {
-        if len(os.Args) < 3 {
+func runCommand(args []string) {
+        if len(args) < 1 {
 	   fmt.Printf("\nMissing rootfs path")
 	   os.Exit(1)
 	}
-	must(os.Chdir(os.Args[2]))	
+	must(os.Chdir(args[0]))	
 	
 	//var Args []string
         var Dir []string
@@ -85,9 +71,9 @@ func child() {
 	fmt.Printf("\nEnv[] %v",Env)
         Dir = configSection(".cuckoo/dir")   
 	fmt.Printf("\nDir[] %v",Dir)
-	if len(os.Args) > 3 {
-	   //fmt.Printf("\nos.Args %v",os.Args[3:])
-	   Args = os.Args[3:]
+	if len(args) > 1 {
+		//fmt.Printf("\nargs %v",args[1:])
+	   Args = args[3:]
 	   fmt.Printf("\nArgs[] %v",Args)
 	}
 
@@ -120,17 +106,17 @@ func child() {
 	   fmt.Printf("\nChange directory to: %s",Dir[0])
 	   os.Chdir(Dir[0])
 	}
-	fmt.Printf("\n\nRun container:\n\n")
+	fmt.Printf("\n\nRun program:\n\n")
 	err = cmd.Run()
         if err != nil {
-		fmt.Printf("\nError result from container : %v\n",err)
+		fmt.Printf("\nError result from program : %v\n",err)
         }
 	
         must(syscall.Unmount("/dev", 0))
         must(syscall.Unmount("/sys", 0))
         must(syscall.Unmount("/proc", 0))
 	
-	fmt.Printf("\nExit container.\n")
+	fmt.Printf("\nExit program.\n")
 }  
 
 func must(err error) {
