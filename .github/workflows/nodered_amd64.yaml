@@ -1,4 +1,4 @@
-name: nodered cuckoo
+name: nodered cuckoo amd64
 
 on:
   workflow_dispatch:
