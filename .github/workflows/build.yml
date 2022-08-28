@@ -36,7 +36,7 @@ jobs:
           ./rootfs-generator.sh linux/amd64 nodered/node-red
           mkdir nodered
           sudo tar zxf nodered_node-red_linux_amd64.tar.gz -C nodered
-          sudo dist/cuckoo_linux_amd64/cuckoo run nodered
+          sudo dist/cuckoo_linux_amd64_v1/cuckoo run nodered
           ./rootfs-generator.sh linux/amd64 alpine
           ls -l
           mkdir alpine
