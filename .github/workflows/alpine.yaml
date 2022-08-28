@@ -23,5 +23,5 @@ jobs:
         name: Upload archive
         uses: actions/upload-artifact@v2
         with: 
-          name: nodered arm64
-          path: nodered_node-red_linux_arm64.tar.gz
+          name: alpine arm64
+          path: alpine_linux_arm64.tar.gz
