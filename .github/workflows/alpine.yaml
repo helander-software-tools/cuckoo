@@ -1,0 +1,27 @@
+name: nodered cuckoo
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  goreleaser:
+    runs-on: ubuntu-latest
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      -
+        name: Build nodered cuckoo rootfs
+        run: |
+          ./rootfs-generator.sh linux/arm64 alpine
+      -
+        name: Upload archive
+        uses: actions/upload-artifact@v2
+        with: 
+          name: nodered arm64
+          path: nodered_node-red_linux_arm64.tar.gz
