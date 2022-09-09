@@ -1,0 +1,27 @@
+name: mqtt-explorer cuckoo
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  goreleaser:
+    runs-on: ubuntu-latest
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      -
+        name: Build mqtt-explorer cuckoo rootfs
+        run: |
+          ./rootfs-generator.sh linux/arm64 smeagolworms4/mqtt-explorer
+      -
+        name: Upload archive
+        uses: actions/upload-artifact@v2
+        with: 
+          name: mqtt-explorer arm64
+          path: smeagolworms4_mqtt_explorer_linux_arm64.tar.gz
