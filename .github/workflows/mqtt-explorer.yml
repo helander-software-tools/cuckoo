@@ -18,10 +18,10 @@ jobs:
       -
         name: Build mqtt-explorer cuckoo rootfs
         run: |
-          ./rootfs-generator.sh linux/arm64 smeagolworms4/mqtt-explorer
+          ./rootfs-generator.sh linux/arm64 emqx/mqttx-web
       -
         name: Upload archive
         uses: actions/upload-artifact@v2
         with: 
           name: mqtt-explorer arm64
-          path: smeagolworms4_mqtt-explorer_linux_arm64.tar.gz
+          path: emqx_mqttx-web_linux_arm64.tar.gz
