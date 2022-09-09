@@ -19,6 +19,7 @@ jobs:
         name: Build mqtt-explorer cuckoo rootfs
         run: |
           ./rootfs-generator.sh linux/arm64 smeagolworms4/mqtt-explorer
+          find .
       -
         name: Upload archive
         uses: actions/upload-artifact@v2
