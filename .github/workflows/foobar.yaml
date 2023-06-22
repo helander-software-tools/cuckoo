@@ -1,4 +1,4 @@
-name: foobar cuckoo
+name: debian cuckoo
 
 on:
   workflow_dispatch:
@@ -16,13 +16,13 @@ jobs:
         with:
           fetch-depth: 0
       -
-        name: Build foobar cuckoo rootfs
+        name: Build debian cuckoo rootfs
         run: |
-          ./rootfs-generator.sh linux/arm64 runcitadel/deno:main-arm64
+          ./rootfs-generator.sh linux/arm64 debian:stable-slim
           find .
       -
         name: Upload archive
         uses: actions/upload-artifact@v2
         with: 
-          name: foobar arm64
-          path: runcitadel_deno_main-arm64_linux_arm64.tar.gz
+          name: debian arm64
+          path: debian_stable_slim-arm64_linux_arm64.tar.gz
