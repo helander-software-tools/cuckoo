@@ -19,6 +19,7 @@ jobs:
         name: Build foobar cuckoo rootfs
         run: |
           ./rootfs-generator.sh linux/arm64 runcitadel/deno:main-arm64
+          find .
       -
         name: Upload archive
         uses: actions/upload-artifact@v2
