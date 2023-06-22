@@ -1,4 +1,4 @@
-name: alpine cuckoo
+name: foobar cuckoo
 
 on:
   workflow_dispatch:
@@ -16,12 +16,12 @@ jobs:
         with:
           fetch-depth: 0
       -
-        name: Build alpine cuckoo rootfs
+        name: Build foobar cuckoo rootfs
         run: |
-          ./rootfs-generator.sh linux/arm64 alpine
+          ./rootfs-generator.sh linux/arm64 runcitadel/deno:main-arm64
       -
         name: Upload archive
         uses: actions/upload-artifact@v2
         with: 
-          name: alpine arm64
-          path: alpine_linux_arm64.tar.gz
+          name: foobar arm64
+          path: foobar_linux_arm64.tar.gz
