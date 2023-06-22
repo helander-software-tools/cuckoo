@@ -25,4 +25,4 @@ jobs:
         uses: actions/upload-artifact@v2
         with: 
           name: debian arm64
-          path: debian_stable_slim-arm64_linux_arm64.tar.gz
+          path: debian_stable-slim_linux_arm64.tar.gz
