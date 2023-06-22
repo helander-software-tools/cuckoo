@@ -25,4 +25,4 @@ jobs:
         uses: actions/upload-artifact@v2
         with: 
           name: foobar arm64
-          path: foobar_linux_arm64.tar.gz
+          path: runcitadel_deno_main-arm64_linux_arm64.tar.gz
