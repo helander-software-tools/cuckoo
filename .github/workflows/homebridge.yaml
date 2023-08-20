@@ -1,1 +1,27 @@
-rr
+name: homebridge cuckoo
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  goreleaser:
+    runs-on: ubuntu-latest
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      -
+        name: Build homebridge cuckoo rootfs
+        run: |
+          ./rootfs-generator.sh linux/arm64 homebridge/homebridge
+      -
+        name: Upload archive
+        uses: actions/upload-artifact@v2
+        with: 
+          name: homebridge arm64
+          path: homebridge_homebridge_linux_arm64.tar.gz
