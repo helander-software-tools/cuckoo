@@ -1,4 +1,4 @@
-name: alpine cuckoo
+name: alpine amd64 cuckoo
 
 on:
   workflow_dispatch:
