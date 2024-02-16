@@ -23,7 +23,10 @@ func configSection(filePath string) []string {
     fileScanner.Split(bufio.ScanLines)
     var fileLines []string
     for fileScanner.Scan() {
-        fileLines = append(fileLines, strings.Trim(fileScanner.Text()," "))
+        line := strings.Trim(fileScanner.Text()," ")
+	if len(line) > 0 {
+          fileLines = append(fileLines, strings.Trim(fileScanner.Text()," "))
+        }
     }
     readFile.Close()
     return fileLines
@@ -87,6 +90,7 @@ func runCommand(args []string, entrypoint string) {
 	} else {
 	  progCmd = command(Entrypoint,Cmd,args,entrypoint)
         }
+	//fmt.Printf("COMMAND  %v",progCmd)
 	cmd := exec.Command(progCmd[0], progCmd[1:]...)
         cmd.Stdin = os.Stdin
         cmd.Stdout = os.Stdout
@@ -118,7 +122,7 @@ func runCommand(args []string, entrypoint string) {
 	must(syscall.Chroot("."))
 	must(os.Chdir("/"))
 	
-	if Dir[0] != "" {
+	if len(Dir) > 0  {
 	   os.Chdir(Dir[0])
 	}
 
