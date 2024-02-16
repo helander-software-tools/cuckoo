@@ -41,13 +41,13 @@ jobs:
           mkdir alpine
           sudo tar zxf alpine_linux_amd64.tar.gz -C alpine
           sudo echo "" > alpine/.cuckoo/cmd
-          sudo dist/cuckoo_linux_amd64_v1/cuckoo alpine cat /proc/self/cmdline
+          sudo dist/cuckoo_linux_amd64_v1/cuckoo alpine "cat /proc/self/cmdline"
           sudo dist/cuckoo_linux_amd64_v1/cuckoo alpine mount
           sudo dist/cuckoo_linux_amd64_v1/cuckoo alpine df
           sudo dist/cuckoo_linux_amd64_v1/cuckoo alpine ps
-          sudo dist/cuckoo_linux_amd64_v1/cuckoo alpine ls -l
-          sudo dist/cuckoo_linux_amd64_v1/cuckoo alpine ls /proc
-          sudo dist/cuckoo_linux_amd64_v1/cuckoo alpine ip link
-          sudo dist/cuckoo_linux_amd64_v1/cuckoo alpine ip addr
-          sudo dist/cuckoo_linux_amd64_v1/cuckoo alpine apk update
-          sudo dist/cuckoo_linux_amd64_v1/cuckoo alpine apk add nano tcpdump
+          sudo dist/cuckoo_linux_amd64_v1/cuckoo alpine "ls -l"
+          sudo dist/cuckoo_linux_amd64_v1/cuckoo alpine "ls /proc"
+          sudo dist/cuckoo_linux_amd64_v1/cuckoo alpine "ip link"
+          sudo dist/cuckoo_linux_amd64_v1/cuckoo alpine "ip addr"
+          sudo dist/cuckoo_linux_amd64_v1/cuckoo alpine "apk update"
+          sudo dist/cuckoo_linux_amd64_v1/cuckoo alpine "apk add nano tcpdump"
