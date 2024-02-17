@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"flag"
 	"fmt"
 	"os"
@@ -8,36 +9,57 @@ import (
 	"os/signal"
 	"strings"
 	"syscall"
-        "bufio"
 	"io/ioutil"
 )
 
 
-func configSection(filePath string) []string {
-    readFile, err := os.Open(filePath)
+
+func jsonStringConfig(filePath string) string {
+    b, err := os.ReadFile(filePath)
     if err != nil {
-        fmt.Println(err)
-	return nil
+        fmt.Printf("Unable to read file due to %s\n", err)
+	return ""
     }
-    fileScanner := bufio.NewScanner(readFile)
-    fileScanner.Split(bufio.ScanLines)
-    var fileLines []string
-    for fileScanner.Scan() {
-        line := strings.Trim(fileScanner.Text()," ")
-	if len(line) > 0 {
-          fileLines = append(fileLines, strings.Trim(fileScanner.Text()," "))
-        }
+
+    var result string
+
+    err = json.Unmarshal(b, &result)
+    if err != nil {
+        fmt.Printf("Unable to marshal JSON due to %s", err)
+	return ""
     }
-    readFile.Close()
-    return fileLines
+    return result
+
 }
 
+func jsonArrayConfig(filePath string) []string {
+    b, err := os.ReadFile(filePath)
+    if err != nil {
+        fmt.Printf("Unable to read file due to %s\n", err)
+	return nil
+    }
+
+    var result []string
+
+    err = json.Unmarshal(b, &result)
+    if err != nil {
+        fmt.Printf("Unable to marshal JSON due to %s", err)
+	return nil
+    }
+    return result
+
+}
 
 func main() {
+	flag.Usage = func() {
+	  fmt.Fprintf(flag.CommandLine.Output(), "Usage:   %s [flags] rootfs-dir [arguments]\n", os.Args[0])
+	  flag.PrintDefaults()
+	}
         entrypointPtr := flag.String("entrypoint","", "entrypoint program")
 	flag.Parse()
         if len(flag.Args()) < 1 {
 	   fmt.Printf("\nMissing cuckoo/rootfs path\n")
+	   flag.Usage()
 	   os.Exit(1)
 	}
 	err:= os.Chdir(flag.Args()[0])
@@ -53,37 +75,30 @@ func command(entrypoint []string, cmd []string, commandLine []string, entrypoint
 	if len(entrypointflag) > 0 {
 	  args = append(args,strings.Split(entrypointflag," ")...)
 	} else {
-	  if len(entrypoint) > 0 {
-	    args = append(args,entrypoint...)
-	  } else {
-	    args = append(args,"/bin/sh", "-c")
-          }
+	  args = append(args,entrypoint...)
 	}
 
-        var command  []string
-	if len(cmd) > 0 {
-	  command = append(command,cmd...)
-	}
 	if len(commandLine) > 0 {
-	  command = append(command,commandLine...)
+	  args = append(args,commandLine...)
+	} else {
+	  args = append(args,cmd...)
 	}
 
-	args = append(args,command...)
 	return args
 }
 
 func runCommand(args []string, entrypoint string) {
 
-        var Dir []string
+        var Dir string
         var Env []string
 	var Entrypoint[]string
 	var Cmd[]string
 	var progCmd[]string
 	
-        Cmd = configSection(".cuckoo/cmd")
-	Entrypoint = configSection(".cuckoo/entrypoint")
-        Env = configSection(".cuckoo/env")
-        Dir = configSection(".cuckoo/dir")
+        Cmd = jsonArrayConfig(".cuckoo/cmd")
+	Entrypoint = jsonArrayConfig(".cuckoo/entrypoint")
+        Env = jsonArrayConfig(".cuckoo/env")
+        Dir = jsonStringConfig(".cuckoo/dir")
 
         if len(args) < 1 {
 	  progCmd = command(Entrypoint,Cmd,[]string{},entrypoint)
@@ -123,7 +138,7 @@ func runCommand(args []string, entrypoint string) {
 	must(os.Chdir("/"))
 	
 	if len(Dir) > 0  {
-	   os.Chdir(Dir[0])
+	   os.Chdir(Dir)
 	}
 
 	sigs := make(chan os.Signal, 1)
