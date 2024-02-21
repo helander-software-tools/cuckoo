@@ -1,13 +1,14 @@
 package main
 
 import (
+	"bufio"
 	"encoding/json"
 	"flag"
 	"fmt"
 	"os"
 	"os/exec"
 	"os/signal"
-	"strings"
+	"path/filepath"
 	"syscall"
 	"io/ioutil"
 )
@@ -56,24 +57,22 @@ func main() {
 	  flag.PrintDefaults()
 	}
         entrypointPtr := flag.String("entrypoint","", "entrypoint program")
+        outputpathPtr := flag.String("output","", "file for stdout/stderr")
+        verbosePtr := flag.Bool("verbose",false, "verbose output")
 	flag.Parse()
         if len(flag.Args()) < 1 {
 	   fmt.Printf("\nMissing cuckoo/rootfs path\n")
 	   flag.Usage()
 	   os.Exit(1)
 	}
-	err:= os.Chdir(flag.Args()[0])
-	if err != nil {
-		fmt.Printf("\nCould not change directory to  %v\n",flag.Args()[0])
-		os.Exit(1)
-	}
-	runCommand(flag.Args()[1:],*entrypointPtr)
+	runCommand(flag.Args()[0],flag.Args()[1:],*entrypointPtr,*verbosePtr,*outputpathPtr)
 }
 
 func command(entrypoint []string, cmd []string, commandLine []string, entrypointflag string) []string {
         var args []string
+
 	if len(entrypointflag) > 0 {
-	  args = append(args,strings.Split(entrypointflag," ")...)
+	  args = append(args,entrypointflag)
 	} else {
 	  args = append(args,entrypoint...)
 	}
@@ -81,13 +80,16 @@ func command(entrypoint []string, cmd []string, commandLine []string, entrypoint
 	if len(commandLine) > 0 {
 	  args = append(args,commandLine...)
 	} else {
-	  args = append(args,cmd...)
+          // This seems to be the logic for docker run --entrypoint
+	  if len(entrypointflag) < 1 {
+	    args = append(args,cmd...)
+	  }
 	}
 
 	return args
 }
 
-func runCommand(args []string, entrypoint string) {
+func runCommand(rootfspath string,args []string, entrypoint string, verbose bool,outputpath string) {
 
         var Dir string
         var Env []string
@@ -95,22 +97,45 @@ func runCommand(args []string, entrypoint string) {
 	var Cmd[]string
 	var progCmd[]string
 	
-        Cmd = jsonArrayConfig(".cuckoo/cmd")
-	Entrypoint = jsonArrayConfig(".cuckoo/entrypoint")
-        Env = jsonArrayConfig(".cuckoo/env")
-        Dir = jsonStringConfig(".cuckoo/dir")
+        Cmd = jsonArrayConfig(filepath.Join(rootfspath,".cuckoo/cmd"))
+	Entrypoint = jsonArrayConfig(filepath.Join(rootfspath,".cuckoo/entrypoint"))
+        Env = jsonArrayConfig(filepath.Join(rootfspath,".cuckoo/env"))
+        Dir = jsonStringConfig(filepath.Join(rootfspath,".cuckoo/dir"))
 
-        if len(args) < 1 {
-	  progCmd = command(Entrypoint,Cmd,[]string{},entrypoint)
-	} else {
+	//fmt.Printf("ARGS %v\n",args)
+        //if len(args) < 1 {
+	//  progCmd = command(Entrypoint,Cmd,[]string{},entrypoint)
+	//} else {
 	  progCmd = command(Entrypoint,Cmd,args,entrypoint)
-        }
-	//fmt.Printf("COMMAND  %v",progCmd)
-	cmd := exec.Command(progCmd[0], progCmd[1:]...)
+        //}
+        if verbose {fmt.Printf("Run command   %v\n",progCmd)}
+	var cmd *exec.Cmd
+	if len(progCmd) < 2 {
+	  cmd = exec.Command(progCmd[0])
+        } else {
+	  cmd = exec.Command(progCmd[0], progCmd[1:]...)
+	}
         cmd.Stdin = os.Stdin
-        cmd.Stdout = os.Stdout
-        cmd.Stderr = os.Stderr
+	if len(outputpath) > 0 {
+	  outfile, err := os.Create(outputpath)
+ 	  if err != nil {
+	    panic(err)
+	  }
+	  writer := bufio.NewWriter(outfile)
+	  defer writer.Flush()
+	  defer outfile.Close()
+	  cmd.Stdout = outfile
+          cmd.Stderr = outfile
+	} else {
+          cmd.Stdout = os.Stdout
+          cmd.Stderr = os.Stderr
+	}
         cmd.Env = Env
+	err:= os.Chdir(rootfspath)
+	if err != nil {
+		fmt.Printf("\nCould not change directory to  %v\n",rootfspath)
+		os.Exit(1)
+	}
 
 	bytesRead, err := ioutil.ReadFile("/etc/resolv.conf")
         if err != nil {
@@ -120,15 +145,6 @@ func runCommand(args []string, entrypoint string) {
         if err != nil {
           panic(err)
         }
-
-        /* In case we need individual mount points for each container, create a tempdir somewhere and mount on subdirs
-            replace the defer method with a function that does umounts and after that os.RemoveAll 
-	dir, err := os.MkdirTemp("", "example")
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer os.RemoveAll(dir) // clean up
-        */
 
 	must(syscall.Mount("/proc", "proc", "", syscall.MS_BIND, ""))
         must(syscall.Mount("/dev", "dev", "", syscall.MS_BIND, ""))
@@ -149,6 +165,11 @@ func runCommand(args []string, entrypoint string) {
 	   fmt.Println()
 	   fmt.Println(sig)
 	}()
+
+
+	cmd.SysProcAttr = &syscall.SysProcAttr{
+		Cloneflags: syscall.CLONE_NEWPID,
+	}
 
 	err = cmd.Run()
         if err != nil {
