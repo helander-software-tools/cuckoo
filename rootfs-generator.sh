@@ -22,8 +22,17 @@ docker inspect $CONTAINER|jq '.[].Config.Cmd'         > .cuckoo/cmd
 
 docker cp .cuckoo $CONTAINER:/
 
-docker export $CONTAINER | gzip > ${COMPONENT}_${PLATFORM}.tar.gz 
+docker export $CONTAINER > ${COMPONENT}_${PLATFORM}.tar 
+rm -fr rootfs
+mkdir rootfs
+tar xf ${COMPONENT}_${PLATFORM}.tar  -C rootfs
+rm -f ${COMPONENT}_${PLATFORM}.sfs 
+mksquashfs  rootfs ${COMPONENT}_${PLATFORM}.sfs -all-root
 
+
+rm -fr rootfs
+rm -f ${COMPONENT}_${PLATFORM}.tar.gz 
+gzip ${COMPONENT}_${PLATFORM}.tar 
 docker rm -f $CONTAINER
 
 rm -fr .cuckoo
