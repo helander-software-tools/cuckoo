@@ -14,6 +14,7 @@ import (
 	"io/ioutil"
 )
 
+var verbose bool = false
 
 func main() {
 	flag.Usage = func() {
@@ -89,7 +90,8 @@ func main() {
 	       runCmd.Usage()
 	       os.Exit(1)
 	     }
-             runCommand(runCmd.Args()[0],runCmd.Args()[1:],*runEntrypoint,*runVerbose,*runOutputpath)
+	    verbose = *runVerbose 
+            runCommand(runCmd.Args()[0],runCmd.Args()[1:],*runEntrypoint,*runVerbose,*runOutputpath)
           default:
              fmt.Println("unknown subcommand")
              flag.Usage()
@@ -231,6 +233,26 @@ func runCommand(containerpath string,args []string, entrypoint string, verbose b
 	var progCmd[]string
 	
 	rootfspath := filepath.Join(containerpath,"rootfs")
+	imagefspath := filepath.Join(containerpath,"image")
+	upperpath := filepath.Join(containerpath,"upper")
+	workdirpath := filepath.Join(containerpath,"workdir")
+	imagelinkpath := filepath.Join(containerpath,"imagelink")
+
+        if IsDirEmpty(imagefspath) {
+          cmd := exec.Command("mount","--type","squashfs","--options","loop,ro","--source",imagelinkpath, "--target",imagefspath)
+	  cerr := cmd.Run()
+          if cerr != nil {
+		panic(cerr)
+          }
+	}
+        if IsDirEmpty(rootfspath) {
+          options := "lowerdir="+imagefspath+",upperdir="+upperpath+",workdir="+workdirpath
+          cmd := exec.Command("mount","--type","overlay","--options",options,"--source","overlay", "--target",rootfspath)
+	  cerr := cmd.Run()
+          if cerr != nil {
+		panic(cerr)
+          }
+	}
 
         Cmd = jsonArrayConfig(filepath.Join(rootfspath,".cuckoo/cmd"))
 	Entrypoint = jsonArrayConfig(filepath.Join(rootfspath,".cuckoo/entrypoint"))
@@ -318,13 +340,65 @@ func runCommand(containerpath string,args []string, entrypoint string, verbose b
 func createCommand(containerpath string,args []string) {
 	
 	rootfspath := filepath.Join(containerpath,"rootfs")
+	imagepath := args[0];
 
+	imagefspath := filepath.Join(containerpath,"image")
+	upperpath := filepath.Join(containerpath,"upper")
+	workdirpath := filepath.Join(containerpath,"workdir")
+	imagelinkpath := filepath.Join(containerpath,"imagelink")
+
+	must(os.Mkdir(containerpath,0777))
+	must(os.Mkdir(rootfspath,0777))
+	must(os.Mkdir(imagefspath,0777))
+	must(os.Mkdir(upperpath,0777))
+	must(os.Mkdir(workdirpath,0777))
+	must(os.Symlink(imagepath,imagelinkpath))
+
+        cmd := exec.Command("mount","--type","squashfs","--options","loop,ro","--source",imagepath, "--target",imagefspath)
+	cerr := cmd.Run()
+        if cerr != nil {
+		panic(cerr)
+        }
+        options := "lowerdir="+imagefspath+",upperdir="+upperpath+",workdir="+workdirpath
+        cmd = exec.Command("mount","--type","overlay","--options",options,"--source","overlay", "--target",rootfspath)
+	cerr = cmd.Run()
+        if cerr != nil {
+		panic(cerr)
+        }
+
+
+
+
+//        options := "lowerdir="+imagefspath+",upperdir="+upperpath+",workdir="+workdirpath
+//	must(syscall.Mount("overlay", rootfspath, "overlay", 0, options))
 /*
 Here we shall mount the squasfs image and mount the overlay. We also shall create all dirs and links under the containerpath.
 
+content=$(ls ${containerpath}/rootfs)
+
+if [ "$content" == "" ]; then
+   mount  --type="squashfs" --options="loop,ro" --source="${containerpath}/imagelink" --target="${containerpath}/image"
+
+   mount --type="overlay" \
+      --options="lowerdir=${containerpath}/image,upperdir=${containerpath}/upper,workdir=${containerpath}/workdir" \
+           --source="overlay" --target="${containerpath}/rootfs"
+else
+  echo "Rootfs has content, i.e. overlay already mounted."
+fi
+
+
+
+
+
+	err := syscall.Mount("overlay", cfg.Dest, "overlay", 0, cfg.Opts())
+	if err != nil {
+		const text = "error mounting overlay with options '%s' and dest '%s'"
+		return errwrap.Wrap(fmt.Errorf(text, cfg.Opts(), cfg.Dest), err)
+	}
+
 */
 
-	err:= os.Chdir(rootfspath)
+	err := os.Chdir(rootfspath)
 	if err != nil {
 		fmt.Printf("\nCould not change directory to  %v\n",rootfspath)
 		os.Exit(1)
@@ -347,36 +421,30 @@ Here we shall mount the squasfs image and mount the overlay. We also shall creat
 }
 
 func rmCommand(containerpath string,args []string) {
-	
+
 	rootfspath := filepath.Join(containerpath,"rootfs")
 
+          just(syscall.Unmount(filepath.Join(rootfspath,"sys"), syscall.MNT_FORCE))
+          just(syscall.Unmount(filepath.Join(rootfspath,"dev/pts"), syscall.MNT_FORCE))
+          just(syscall.Unmount(filepath.Join(rootfspath,"dev"), syscall.MNT_FORCE))
+          just(syscall.Unmount(filepath.Join(rootfspath,"proc"), syscall.MNT_FORCE))
+          just(syscall.Unmount(rootfspath, syscall.MNT_FORCE))
+          just(syscall.Unmount(filepath.Join(containerpath,"image"), syscall.MNT_FORCE))
 
-	err:= os.Chdir(rootfspath)
-	if err != nil {
-		fmt.Printf("\nCould not change directory to  %v\n",rootfspath)
-		os.Exit(1)
-	}
+	just(os.RemoveAll(containerpath))
 
-
-          syscall.Unmount("sys", syscall.MNT_FORCE)
-          syscall.Unmount("dev/pts", syscall.MNT_FORCE)
-          syscall.Unmount("dev", syscall.MNT_FORCE)
-          syscall.Unmount("proc", syscall.MNT_FORCE)
-
-	err = os.Chdir("..")
-          syscall.Unmount("rootfs", syscall.MNT_FORCE)
-          syscall.Unmount("image", syscall.MNT_FORCE)
-
-
-/*
-Here we shall delete all dirs and links under and at  the containerpath.
-*/
 
 }
 
 func must(err error) {
 	if err != nil {
 		panic(err)
+	}
+}
+
+func just(err error) {
+	if err != nil {
+		fmt.Printf("\nError: %v\n",err)
 	}
 }
 
